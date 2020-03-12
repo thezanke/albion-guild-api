@@ -1,37 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GameApiService, IApiGuildMemberData, IApiGuildData } from '../game-api/game-api.service';
 import * as Bluebird from 'bluebird';
-
-export interface IGuildData {
-  id: string;
-  name: string;
-  memberCount: number;
-}
-
-export interface IGuildMemberDetails {
-  id: string;
-  name: string;
-  avatar: string;
-  avatarRing: string;
-  killFame: number;
-  deathFame: number;
-  fameRatio: number;
-  stats: {
-    pve: number;
-    gathering: number;
-    crafting: number;
-    crystalLeague: number;
-  };
-}
-
-interface IGuildMemberMap {
-  [key: string]: IGuildMemberDetails;
-}
-
-export interface IGuildResponseData {
-  guild: IGuildData;
-  members: IGuildMemberMap;
-}
+import { IGuildData, IGuildMemberDetails, IGuildResponseData, IGuildMemberMap } from './types';
 
 const parseGuildData = (data: IApiGuildData): IGuildData => ({
   id: data.Id,
