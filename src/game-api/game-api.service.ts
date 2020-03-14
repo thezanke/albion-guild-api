@@ -82,6 +82,10 @@ export interface IApiGuildMemberData {
   };
 }
 
+// export interface IApiKillData {
+
+// }
+
 @Injectable()
 export class GameApiService {
   constructor(private readonly httpService: HttpService) {}
@@ -97,7 +101,9 @@ export class GameApiService {
   }
 
   async getTopKills() {
-    const res = await this.httpService.get(`${API_URL}/gameinfo/guilds/${GUILD_ID}/top`).toPromise();
+    const res = await this.httpService
+      .get(`${API_URL}/gameinfo/guilds/${GUILD_ID}/top`, { params: { limit: 10 } })
+      .toPromise();
     return res.data;
   }
 
