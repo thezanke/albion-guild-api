@@ -10,7 +10,7 @@ export class EventsGateway {
   constructor(private readonly guildService: GuildService) {}
 
   @SubscribeMessage('request:guildData')
-  async requestGuildData(@ConnectedSocket() client: Socket) {
+  requestGuildData(@ConnectedSocket() client: Socket) {
     const guildData = this.guildService.getData();
     client.emit('response:guildData', guildData);
   }

@@ -30,6 +30,7 @@ export class GuildService {
   logger = new Logger('GuildService');
   guild: IGuildData;
   members: IGuildMemberMap = {};
+  topKills: any[] = [];
 
   constructor(private readonly gameApiService: GameApiService) {
     setInterval(() => this.updateData(), 60 * 1000);
@@ -37,25 +38,31 @@ export class GuildService {
   }
 
   updateMembersData() {
-    return Bluebird.each(this.gameApiService.getMembersData(), memberData => {
-      const memberDetails = parseMemberData(memberData);
+    return Bluebird.each(this.gameApiService.getMembersData(), data => {
+      const memberDetails = parseMemberData(data);
       this.members[memberDetails.id] = memberDetails;
     });
   }
 
   async updateGuildData() {
-    const guildData = await this.gameApiService.getGuildData();
-    this.guild = parseGuildData(guildData);
+    const data = await this.gameApiService.getGuildData();
+    this.guild = parseGuildData(data);
+  }
+
+  async updateTopKillsData() {
+    const data = await this.gameApiService.getTopKills();
+    this.topKills = data;
   }
 
   updateData() {
-    return Bluebird.all([this.updateGuildData(), this.updateMembersData()]);
+    return Bluebird.all([this.updateGuildData(), this.updateMembersData(), this.updateTopKillsData()]);
   }
 
   getData(): IGuildResponseData {
     return {
       guild: this.guild,
       members: this.members,
+      topKills: this.topKills,
     };
   }
 }
