@@ -10,5 +10,6 @@ export class EventsGateway {
 
   handleConnection(@ConnectedSocket() client: Socket) {
     this.guildService.emitData(client);
+    this.referenceService.emitData(client);
   }
 }
