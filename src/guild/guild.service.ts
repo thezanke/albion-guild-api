@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Socket } from 'socket.io';
 import { GameApiService } from '../game-api/game-api.service';
 import { IApiPlayerData, IApiGuildData, IApiKillData, IApiItemData } from '../game-api/types';
 import * as Bluebird from 'bluebird';
@@ -26,7 +27,7 @@ const parseGuildMemberData = (data: IApiPlayerData): IPlayerDetails => ({
   },
 });
 
-const parseItemData = (data: IApiItemData) => data && ({
+const parseItemData = (data: IApiItemData) => ({
   type: data.Type,
   count: data.Count,
   quality: data.Quality,
@@ -39,7 +40,8 @@ const parseKillParticipantData = (data: IApiPlayerData) => ({
   killFame: data.KillFame,
   deathFame: data.DeathFame,
   equipment: Object.keys(data.Equipment).reduce((equipment, slot) => {
-    equipment[slot] = parseItemData(data.Equipment[slot]);
+    const itemData = data.Equipment[slot];
+    equipment[slot] = itemData && parseItemData(itemData);
     return equipment;
   }, {}),
   inventory: data.Inventory.filter(Boolean).map(parseItemData),
@@ -96,5 +98,9 @@ export class GuildService {
       members: this.members,
       topKills: this.topKills,
     };
+  }
+
+  emitData(client: Socket) {
+    client.emit('guildData', this.getData());
   }
 }
